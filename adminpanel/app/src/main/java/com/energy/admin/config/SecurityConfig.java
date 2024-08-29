@@ -14,15 +14,22 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        // Schakel alle beveiligingsmechanismen uit en maak alle verzoeken toegankelijk
-        httpSecurity.csrf().disable()
-                .authorizeHttpRequests()
-                .anyRequest().permitAll()  // Sta alle verzoeken toe zonder authenticatie
-                .and()
-                .formLogin().disable()  // Schakel formuliergebaseerde login uit
-                .logout().disable();  // Schakel uitloggen uit
+        http.headers(headers ->
+                headers.xssProtection(
+                        xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK)
+                ).contentSecurityPolicy(
+                        cps -> cps.policyDirectives("script-src 'self'")
+                ));
+        return http.build();
+        // // Schakel alle beveiligingsmechanismen uit en maak alle verzoeken toegankelijk
+        // httpSecurity.csrf().disable().css
+        //         .authorizeHttpRequests()
+        //         .anyRequest().permitAll()  // Sta alle verzoeken toe zonder authenticatie
+        //         .and()
+        //         .formLogin().disable()  // Schakel formuliergebaseerde login uit
+        //         .logout().disable();  // Schakel uitloggen uit
 
-        return httpSecurity.build();
+        // return httpSecurity.build();
     }
 
     @Bean
